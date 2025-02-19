@@ -24,13 +24,14 @@ services:
   pub_run:
     extends: pub_overlay
     privileged: true
+    profiles: [run]
     volumes:
       - ./projs/publisher/standalone/cfg.yml:/app/cfg.yml
       - ./cache/publisher/tskpub.log:/ws/tskpub.log
     ports:
       - 29813:29813/udp
       - 29813:29813/tcp
-    # command: /app/publisher -c /app/cfg.yml
+    command: /app/publisher -c /app/cfg.yml
 
   pub_dev:
     extends: pub_overlay
@@ -84,6 +85,7 @@ services:
     extends: sub_overlay
     volumes:
       - ./tinysk.yml:/ws/subscriber/cfg.yml
+    profiles: [run]
     ports:
       - 8765:8765
     environment:
