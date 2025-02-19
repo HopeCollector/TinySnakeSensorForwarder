@@ -1,0 +1,81 @@
+app:
+  ip: 192.168.54.160
+  port: 8921
+  # 轮询消息队列的频率，单位 Hz
+  checking_rate: 100
+
+log:
+  # stdout, stderr, or a file path
+  filename: stderr
+  # 0: trace, 1: debug, 2: info, 3: warn, 4: error, 5: critical, 6: off
+  level: 2
+  pattern: "[%Y-%m-%d %H:%M:%S] [%L] [%P] %v"
+
+sensors: [status, imu, video, laser]
+
+status:
+  topic: /tinysk/status
+  type: Status
+  ros: Float32MultiArray
+  rate: 1
+  cmd: bash /ws/publisher/test/unit/status.sh
+
+imu:
+  topic: /tinysk/imu
+  frame_id: imu_link
+  type: Imu
+  ros: Imu
+  rate: 100
+  port: /dev/ttyUSB0
+  baud_rate: 115200
+
+video:
+  topic: /tinysk/video
+  frame_id: camera_link
+  type: Image
+  ros: Image
+  rate: 10
+  port: /dev/video4
+  width: 640
+  height: 480
+  fps: 10
+  # this pipeline works for any OS
+  enc_pipeline: jpegenc !
+  # this pipeline works for Raspberry Pi zero2w, cm5
+  # enc_pipeline: v4l2jpegenc extra-controls=\"encode,video_bitrate_mode=1,video_bitrate=2500000\" !
+
+laser:
+  topic: /tinysk/laser
+  frame_id: laser_link
+  type: PointCloud
+  ros: PointCloud2
+  rate: 10
+  port: /dev/ttyACM1
+  cloud_size: 5000
+  device:
+    frequency_modulation: 1
+    HDR: 1
+    imgType: 4
+    cloud_coord: 0
+    int1: 100
+    int2: 1000
+    int3: 0
+    intgs: 2000
+    minLSB: 80
+    curcorner: 60
+    start_stream: true
+    # connect_address: 0.0.0.0
+    maxfps: 30
+    hmirror: 0
+    vmirror: 0
+    renderType: 2
+  filter:
+    medianSize: 3
+    kalmanEnable: true
+    kalmanFactor: 0.30
+    kalmanThreshold: 200
+    edgeEnable: true
+    edgeThreshold: 300
+    dustEnable: true
+    dustThreshold: 2000
+    dustFrames: 2

@@ -1,0 +1,32 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "remote build",
+			"type": "shell",
+			"command": "expect -f .devcontainer/remote_build.exp robot s 10.10.7.200",
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "remote run",
+			"type": "shell",
+			"command": "expect -f .devcontainer/remote_run.exp robot s 10.10.7.200",
+			"problemMatcher": []
+		},
+		{
+			"label": "clean build dir",
+			"type": "shell",
+			"command": "rm -rf build/* && rm -rf build/.*",
+			"problemMatcher": [],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		}
+	]
+}

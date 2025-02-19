@@ -1,0 +1,63 @@
+set timeout -1
+
+set username [lindex $argv 0]
+set password [lindex $argv 1]
+set hostname [lindex $argv 2]
+set workdir /home/$username/workspace/tinysk_ws
+
+############
+# Set time #
+############
+# set current_time [exec date "+%Y-%m-%d %H:%M:%S"]
+# spawn -noecho ssh $username@$hostname
+
+# expect {
+#     "yes/no" { send "yes\r"; exp_continue }
+#     "password:" { send "$password\r" }
+# }
+
+# expect "# "
+# # send "echo $password | sudo -S date -s \"$current_time\"\r"
+# send "date -s \"$current_time\"\r"
+
+# expect "# "
+# send "exit\r"
+
+
+################################################
+# Copy the src directory to the remote machine #
+################################################
+# spawn -noecho rsync -r --exclude src/CMakeLists.txt src $username@$hostname:/ws
+spawn rsync -r /ws/publisher $username@$hostname:$workdir
+
+expect eof
+
+
+###########################################
+# Build the project on the remote machine #
+###########################################
+spawn ssh $username@$hostname
+
+expect "$ "
+send "cd /home/$username/workspace/tinysk_ws\r"
+
+expect "$ "
+send "cmake -S publisher/all -B build\r"
+
+expect "$ "
+send "cmake --build build\r"
+
+expect "$ "
+send "exit\r"
+
+########################################################
+# Copy the try_compile.sh script to the remote machine #
+########################################################
+# spawn -noecho scp .devcontainer/compile.d/try_compile.sh $username@$hostname:/ws
+
+# expect {
+#     "yes/no" { send "yes\r"; exp_continue }
+#     "password:" { send "$password\r" }
+# }
+
+# expect eof

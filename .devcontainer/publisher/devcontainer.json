@@ -1,0 +1,26 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-docker-compose
+{
+	"name": "publisher",
+	"dockerComposeFile": [
+		"../../docker-compose.yml"
+	],
+	"service": "pub_dev",
+	"workspaceFolder": "/ws",
+	"remoteUser": "publisher",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools",
+				"ms-vscode.cmake-tools",
+				"redhat.vscode-yaml",
+				"GitHub.copilot",
+				"GitHub.copilot-chat",
+				"KylinIdeTeam.cmake-intellisence",
+				"ms-python.python",
+				"xmonader.vscode-capnp"
+			]
+		}
+	},
+	"postCreateCommand": "rm /ws/.vscode; ln -s /ws/.devcontainer/.vscode /ws/.vscode"
+}

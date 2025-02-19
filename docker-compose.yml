@@ -1,0 +1,113 @@
+services:
+  ######################
+  # Publisher services #
+  ######################
+  pub_base:
+    build:
+      context: .
+      dockerfile: docker/publisher.Dockerfile
+      target: base
+      args:
+        - all_proxy=socks5://172.17.0.1:7890
+        - http_proxy=http://172.17.0.1:7890
+        - https_proxy=http://172.17.0.1:7890
+        - TZ=Asia/Shanghai
+        - HOSTNAME=SBC
+    image: tiny_snake:pub_base
+
+  pub_overlay:
+    extends: pub_base
+    build:
+      target: overlay
+    image: tiny_snake:pub_overlay
+
+  pub_run:
+    extends: pub_overlay
+    privileged: true
+    volumes:
+      - ./projs/publisher/standalone/cfg.yml:/app/cfg.yml
+      - ./cache/publisher/tskpub.log:/ws/tskpub.log
+    ports:
+      - 29813:29813/udp
+      - 29813:29813/tcp
+    # command: /app/publisher -c /app/cfg.yml
+
+  pub_dev:
+    extends: pub_overlay
+    build:
+      target: dev
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - USERNAME=publisher
+    image: tiny_snake:pub_dev
+    privileged: true
+    init: true
+    volumes:
+      - ./projs/publisher:/ws/publisher
+      - ./cache/publisher:/ws/build
+      - ./.devcontainer/publisher:/ws/.devcontainer
+      - ~/.ssh:/home/publisher/.ssh:ro
+    environment:
+      - all_proxy=socks5://172.17.0.1:7890
+      - http_proxy=http://172.17.0.1:7890
+      - https_proxy=http://172.17.0.1:7890
+    ports:
+      - 29877:29877/udp
+      - 29877:29877/tcp
+    command: sleep infinity
+
+
+  #######################
+  # Subscriber services #
+  #######################
+  sub_base:
+    build:
+      context: .
+      dockerfile: docker/subscriber.Dockerfile
+      target: base
+      args:
+        - all_proxy=socks5://172.17.0.1:7890
+        - http_proxy=http://172.17.0.1:7890
+        - https_proxy=http://172.17.0.1:7890
+        - TZ=Asia/Shanghai
+        - HOSTNAME=GCS
+    image: tiny_snake:sub_base
+
+  sub_overlay:
+    extends: sub_base
+    build:
+      target: overlay
+    image: tiny_snake:sub_overlay
+
+  sub_run:
+    extends: sub_overlay
+    volumes:
+      - ./tinysk.yml:/ws/subscriber/cfg.yml
+    ports:
+      - 8765:8765
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: bash subscriber/run.sh
+
+  sub_dev:
+    extends: sub_overlay
+    build:
+      target: dev
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - USERNAME=subscriber
+    image: tiny_snake:sub_dev
+    volumes:
+      - ./projs/subscriber:/ws/subscriber
+      - ./.devcontainer/subscriber:/ws/.devcontainer
+      - ~/.ssh:/home/publisher/.ssh:ro
+    environment:
+      - all_proxy=socks5://172.17.0.1:7890
+      - http_proxy=http://172.17.0.1:7890
+      - https_proxy=http://172.17.0.1:7890
+    ports:
+      - 17960:17960/udp
+      - 17960:17960/tcp
+    command: sleep infinity
