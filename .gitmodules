@@ -1,0 +1,6 @@
+[submodule "projs/publisher"]
+	path = projs/publisher
+	url = https://github.com/HopeCollector/tinysk_publisher.git
+[submodule "projs/subscriber"]
+	path = projs/subscriber
+	url = https://github.com/HopeCollector/tinysk_subscriber.git

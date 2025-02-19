@@ -1,4 +1,3 @@
-projs
 cache/publisher/*
 cache/subscriber/build/*
 cache/subscriber/devel/*
