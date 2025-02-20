@@ -23,27 +23,13 @@
   - `subscriber`: 订阅者代码
 - `docker-compose.yml`: 服务配置文件
 
-## 项目打包方法
-
-使用下面的指令对项目进行打包
-
-```shell
-export projdir=$(basename $(pwd)) \
-&& cd .. \
-&& tar czfv tinysk-neo-air.tar.gz \
-    --exclude=cache/publisher/* \
-    --exclude=cache/subscriber/build/* \
-    --exclude=cache/subscriber/devel/* \
-    --exclude=projs/publisher/.vscode \
-    --exclude=projs/publisher/.devcontainer \
-    --exclude=projs/publisher/build \
-     $projdir \
-&& cd $projdir \
-&& mv ../tinysk-neo-air.tar.gz . \
-&& unset projdir
-```
-
 ## 使用方法
+
+如果只是使用
+
+1. [克隆项目](#克隆项目)
+2. 修改配置文件 `tinysk.yml`
+3. [启动目标服务](#启动特定服务)
 
 ### 克隆项目
 
