@@ -26,8 +26,7 @@ services:
     privileged: true
     profiles: [run]
     volumes:
-      - ./projs/publisher/standalone/cfg.yml:/app/cfg.yml
-      - ./cache/publisher/tskpub.log:/ws/tskpub.log
+      - ./tinysk.yml:/app/cfg.yml
     ports:
       - 29813:29813/udp
       - 29813:29813/tcp
